@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Noto Sans Arabic", Arial, sans-serif;
+  --color-brand-50: #f5f3ff;
+  --color-brand-100: #ede9fe;
+  --color-brand-200: #ddd6fe;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-brand-800: #5b21b6;
+  --color-ink: #0f172a;
+  --color-muted: #475569;
+  --color-line: #e2e8f0;
+  --color-surface: #f8fafc;
+}
+
+@layer base {
+  html { color-scheme: light; }
+  body { @apply bg-surface text-ink antialiased; font-size: 16px; }
+  :focus-visible { outline: 2px solid var(--color-brand-600); outline-offset: 2px; border-radius: 6px; }
+  ::selection { background: var(--color-brand-200); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* Keep absolutely positioned screen-reader text inside horizontal scroll regions (prevents page overflow). */
+.overflow-x-auto { position: relative; }
