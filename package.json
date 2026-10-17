@@ -14,7 +14,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "start:prod": "prisma migrate deploy && sh -c 'if [ \"$SEED_DEMO\" = \"true\" ]; then tsx prisma/seed.ts; fi' && next start"
+    "start:prod": "node scripts/check-env.mjs && prisma migrate deploy && sh -c 'if [ \"$SEED_DEMO\" = \"true\" ]; then tsx prisma/seed.ts; fi' && next start"
   },
   "engines": {
     "node": ">=20.9"
