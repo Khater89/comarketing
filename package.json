@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "start": "next start",
+    "start": "node scripts/check-env.mjs && prisma migrate deploy && sh -c 'if [ \"$SEED_DEMO\" = \"true\" ]; then tsx prisma/seed.ts; fi' && next start",
     "worker": "tsx scripts/worker.mts",
     "tick": "tsx scripts/worker.mts --once",
     "db:migrate": "prisma migrate dev",
