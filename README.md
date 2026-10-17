@@ -60,6 +60,27 @@ Secrets are read only on the server and never sent to the browser.
 `npm run db:seed` creates "Demo Coffee Roasters" (time zone Africa/Cairo) with four users. All use the password `demo-password-1`:
 `admin@`, `manager@`, `creator@`, `approver@demo.comarketing.test`. This is demo data; do not run the seed in production.
 
+## Deploy on Railway
+
+The repo includes `railway.json`. The build runs `npm run build`. The start command, `npm run start:prod`, applies database migrations, optionally seeds the demo workspace, then starts Next.js on `$PORT`. The health check is `/login`.
+
+1. In Railway: **New Project → Deploy from GitHub repo → `comarketing`**.
+2. In the same project: **+ New → Database → PostgreSQL**.
+3. On the app service, open **Variables** and add:
+
+   | Variable | Value |
+   |---|---|
+   | `DATABASE_URL` | `${{Postgres.DATABASE_URL}}` (reference to the Postgres service) |
+   | `RUN_WORKER_IN_WEB` | `true` (runs publishing and daily drafts inside the web service, so no second service is needed) |
+   | `CRON_SECRET` | a long random string |
+   | `AI_MODE` / `OPENAI_API_KEY` / `OPENAI_MODEL` | `mock` for a demo, or `openai` with your key |
+   | `PUBLISHER_MODE` | `simulate` for a demo, otherwise `none` |
+   | `SEED_DEMO` | `true` on the first deploy to create the demo accounts, then remove it |
+
+4. **Settings → Networking → Generate Domain** to get a public `https://…up.railway.app` URL.
+
+Run a single replica while `RUN_WORKER_IN_WEB=true`. Extra replicas are safe, because jobs take database locks, but they add load for no benefit.
+
 ## Background jobs
 
 `lib/server/jobs.ts → runTick()` does two jobs:
@@ -70,6 +91,7 @@ Secrets are read only on the server and never sent to the browser.
 Ways to run it:
 - `npm run worker` is a long-running loop (every 60 s).
 - `npm run tick` runs once, for system cron: `* * * * * cd /app && npm run tick`.
+- `RUN_WORKER_IN_WEB=true` runs the loop inside the web server (`instrumentation.ts`), which is handy on single-service hosts.
 - `POST /api/cron/tick` with `Authorization: Bearer $CRON_SECRET`, for hosted schedulers.
 
 ## Publishing (important)
